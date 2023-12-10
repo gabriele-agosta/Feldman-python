@@ -7,6 +7,6 @@ class Player:
     def verify(self, generator, p, threshold, coefficients):
         res = 1
         for i in range(threshold):
-            res *= (generator ** coefficients[i]) ** (self.x ** i)
-        self.verification = res % p
+            res = (res * pow(generator, coefficients[i] * self.x**i, p)) % p
+        self.verification = res
         

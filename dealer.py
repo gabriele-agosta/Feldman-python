@@ -13,8 +13,20 @@ class Dealer:
         self.commitments = None
 
     def chooseSecret(self):
-        secret = int(input("Insert your secret: "))
-        self.secret = secret
+        while True:
+            choice = input("Choose what you want to encrypt: \n1.Text/Number; \n2.File content. \n")
+            if choice.isdigit() and 1 <= int(choice) <= 2:
+                break
+        
+        ascii_secret = []
+        if choice == "1":
+            secret = input("Insert your secret: ")
+            ascii_secret = [ord(c) for c in secret]
+        else:
+            with open("secret.txt", "r") as file:
+                secret = file.read()
+                ascii_secret = [ord(c) for c in secret]
+        self.secret = ascii_secret
 
     def chooseQ(self):
         self.q = 127
