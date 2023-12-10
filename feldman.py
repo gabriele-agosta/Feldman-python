@@ -6,8 +6,8 @@ def delta(i, Xs, q):
     d = 1
     for j in Xs:
         if j != i:
-            d *= -j / (i - j)
-    return int(d % q)
+            d = (d * (-j) * pow((i - j) % q, -1, q)) % q
+    return int(d)
 
 def reconstruct(players, q):
     secretReconstructed = 0
