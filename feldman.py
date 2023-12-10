@@ -27,24 +27,26 @@ def main():
 
     n = int(input("Choose the number of players: "))
     players = [Player(i) for i in range(1, n + 1)]
-    reconstructedSecret = ""
     
-    for cipher in dealer.secret:
-        print(f"Q = {dealer.q}, P = {dealer.p}, G = {dealer.g}")
-        f = Polynomial(cipher, dealer.q, dealer.threshold)
-        f.printPolynomial()
+    with open('result.txt', 'w') as result:
+        for n_players in range(1, n + 1):
+            reconstructedSecret = ""
+            for cipher in dealer.secret:
+                print(f"Q = {dealer.q}, P = {dealer.p}, G = {dealer.g}")
+                f = Polynomial(cipher, dealer.q, dealer.threshold)
+                f.printPolynomial()
 
-        dealer.distributeShares(players, f)
-        dealer.distributeCommits(players)
+                curr_players = players[0:n_players]
+                dealer.distributeShares(curr_players, f)
+                dealer.distributeCommits(curr_players)
 
-        for i in range(len(players)):
-            players[i].verify(dealer.g, dealer.p, dealer.threshold, f.coefficients)
-            print(f"Dealer = {dealer.commitments[i]}, Player{i + 1} = {players[i].verification}")
-            if players[i].verification == dealer.commitments[i]:
-                print(f"Player{i + 1} share is verified")
-        reconstructedSecret += chr(reconstruct(players, dealer.q))
-        
-    print(f"Reconstructed secret = {reconstructedSecret}")
+                for i in range(len(curr_players)):
+                    curr_players[i].verify(dealer.g, dealer.p, dealer.threshold, f.coefficients)
+                    print(f"Dealer = {dealer.commitments[i]}, Player{i + 1} = {curr_players[i].verification}")
+                    if curr_players[i].verification == dealer.commitments[i]:
+                        print(f"Player{i + 1} share is verified")
+                reconstructedSecret += chr(reconstruct(curr_players, dealer.q))
+            result.write(f"Reconstructed secret with {n_players} shares = {reconstructedSecret}\n")
 
 if __name__ == "__main__":
     main()
